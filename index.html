@@ -1,0 +1,109 @@
+<!-- https://getbootstrap.com/docs/4.0/components/modal/ -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="">
+    <meta name="description" content="">
+
+    <title>Lights Out</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        $(document).ready(function (e) {
+            $("#setupform").submit(function (e) {
+                var formData = {
+                    rows: $("#rows").val(),
+                    cols: $("#cols").val(),
+                };
+                console.log(formData.rows, formData.cols);
+                $.ajax({
+                    type: "GET",
+                    url: 'setup.php',
+                    data: formData,
+                    success: function (data) {
+                        $('#board').html(data);
+                    }
+                });
+                e.preventDefault();
+            });
+        });
+        function toggleArea(x, y) {
+            console.log(x, y);
+            toggle(x, y);
+            if (x > 0) toggle(x - 1, y);
+            if (x < $("#rows").val() - 1) toggle(x + 1, y);
+            if (y > 0) toggle(x, y - 1);
+            if (y < $("#cols").val() - 1) toggle(x, y + 1);
+            checkWin();
+        }
+
+        function toggle(x, y) {
+            var btnId = "btn" + x + "_" + y;
+            var btn = $("#" + btnId);
+            // console.log(btn);
+            if (btn.hasClass("btn-warning")) btn.removeClass("btn-warning");
+            else btn.addClass("btn-warning");
+        }
+
+        function checkWin() {
+            var btnList = $('td > .btn-warning');
+            if (btnList.length == 0) {
+                $("#exampleModalBtn").click();
+                console.log($("#exampleModalBtn"));
+                $("td > button").prop('disabled', true);
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <form action="setup.php" class="col-9 col-md-6 col-lg-3 mx-auto mt-3 p-5 border border-secondary rounded"
+        id="setupform">
+        <div class="form-row text-center">
+            <div class="form-group col-6">
+                <label for="rows">Rows</label>
+                <input type="number" class="form-control" required value="1" id="rows" name="rows" min="1" />
+            </div>
+            <div class="form-group col-6">
+                <label for="cols">Columns</label>
+                <input type="number" class="form-control" required value="1" id="cols" name="cols" min="1" />
+            </div>
+        </div>
+        <button type="submit" class="btn btn-warning w-100">Start Game</button>
+    </form>
+    <div id="board">
+
+    </div>
+    <button type="button" class="btn btn-primary d-none" data-toggle="modal" data-target="#exampleModal"
+        id="exampleModalBtn">
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    You Win! Click to Play Again
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
